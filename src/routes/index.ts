@@ -1,11 +1,10 @@
 import { Router } from "express";
+import { HealthController } from "../controllers/health.controller";
 
 const router = Router();
 
-router.get("/", (req, res) => {
-  res.json({
-    message: "Selene API is running ⏾",
-  });
-});
+const healthController = new HealthController();
+
+router.get("/", (req, res) => healthController.index(req, res));
 
 export default router;
