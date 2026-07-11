@@ -11,4 +11,16 @@ export class UserService {
 
     return user;
   }
+
+  async getUsers() {
+    return await prisma.user.findMany();
+  }
+
+  async getUserById(id: number) {
+    return await prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
+  }
 }
