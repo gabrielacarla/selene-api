@@ -38,4 +38,18 @@ export class UserController {
 
     return res.json(user);
   }
+
+  async delete(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+
+      await userService.deleteUser(Number(id));
+
+      return res.status(204).send();
+    } catch (error) {
+      return res.status(404).json({
+        message: "Usuário não encontrado",
+      });
+    }
+  }
 }

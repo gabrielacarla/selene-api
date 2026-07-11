@@ -35,4 +35,22 @@ export class UserService {
       },
     });
   }
+
+  async deleteUser(id: number) {
+    const user = await prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!user) {
+      throw new Error("Usuário não encontrado");
+    }
+
+    return await prisma.user.delete({
+      where: {
+        id,
+      },
+    });
+  }
 }
