@@ -13,4 +13,20 @@ model User {
   email     String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  cycles    Cycle[]
+}
+
+model Cycle {
+  id          Int      @id @default(autoincrement())
+  startDate   DateTime
+  endDate     DateTime?
+  cycleLength Int?
+  notes       String?
+
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
