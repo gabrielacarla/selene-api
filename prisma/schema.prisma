@@ -27,6 +27,21 @@ model Cycle {
   userId      Int
   user        User     @relation(fields: [userId], references: [id])
 
+  symptoms    Symptom[]
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model Symptom {
+  id        Int      @id @default(autoincrement())
+  name      String
+  intensity Int?
+  notes     String?
+
+  cycleId   Int
+  cycle     Cycle    @relation(fields: [cycleId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
