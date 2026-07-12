@@ -23,13 +23,19 @@ export class CycleService {
     return await prisma.cycle.findMany();
   }
 
-  async getCycleById(id: number) {
-    return await prisma.cycle.findUnique({
-      where: {
-        id,
-      },
-    });
+ async getCycleById(id: number) {
+  const cycle = await prisma.cycle.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  if (!cycle) {
+    throw new Error("Cycle not found");
   }
+
+  return cycle;
+}
 
   async updateCycle(
     id: number,

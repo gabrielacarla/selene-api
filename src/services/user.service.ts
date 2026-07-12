@@ -17,12 +17,18 @@ export class UserService {
   }
 
   async getUserById(id: number) {
-    return await prisma.user.findUnique({
-      where: {
-        id,
-      },
-    });
+  const user = await prisma.user.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  if (!user) {
+    throw new Error("User not found");
   }
+
+  return user;
+}
 
   async updateUser(id: number, name: string, email: string) {
     return await prisma.user.update({
@@ -44,7 +50,7 @@ export class UserService {
     });
 
     if (!user) {
-      throw new Error("Usuário não encontrado");
+      throw new Error("User not found");
     }
 
     return await prisma.user.delete({
