@@ -17,30 +17,53 @@ export class SymptomService {
     });
   }
 
-  async getSymptoms() {
-    return await prisma.symptom.findMany();
+  async getSymptoms(userId: number) {
+    return await prisma.symptom.findMany({
+      where: {
+        cycle: {
+          userId,
+        },
+      },
+    });
   }
 
- async getSymptomById(id: number) {
-  const symptom = await prisma.symptom.findUnique({
-    where: {
-      id,
-    },
-  });
+  async getSymptomById(id: number, userId: number) {
+    const symptom = await prisma.symptom.findFirst({
+      where: {
+        id,
+        cycle: {
+          userId,
+        },
+      },
+    });
 
-  if (!symptom) {
-    throw new Error("Symptom not found");
+    if (!symptom) {
+      throw new Error("Symptom not found");
+    }
+
+    return symptom;
   }
-
-  return symptom;
-}
 
   async updateSymptom(
     id: number,
+    userId: number,
     name: string,
     intensity?: number,
     notes?: string
   ) {
+    const symptom = await prisma.symptom.findFirst({
+      where: {
+        id,
+        cycle: {
+          userId,
+        },
+      },
+    });
+
+    if (!symptom) {
+      throw new Error("Symptom not found");
+    }
+
     return await prisma.symptom.update({
       where: {
         id,
@@ -53,7 +76,20 @@ export class SymptomService {
     });
   }
 
-  async deleteSymptom(id: number) {
+  async deleteSymptom(id: number, userId: number) {
+    const symptom = await prisma.symptom.findFirst({
+      where: {
+        id,
+        cycle: {
+          userId,
+        },
+      },
+    });
+
+    if (!symptom) {
+      throw new Error("Symptom not found");
+    }
+
     return await prisma.symptom.delete({
       where: {
         id,
