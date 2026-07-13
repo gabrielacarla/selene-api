@@ -26,6 +26,24 @@ export class UserController {
     }
   }
 
+  async profile(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId = req.user?.userId;
+
+      if (!userId) {
+        return res.status(401).json({
+          message: "Unauthorized",
+        });
+      }
+
+      const user = await userService.getUserById(userId);
+
+      return res.json(user);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async update(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
