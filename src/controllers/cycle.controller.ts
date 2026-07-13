@@ -1,72 +1,110 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
+import { ZodError } from "zod";
 import { CycleService } from "../services/cycle.service";
+import { cycleSchema } from "../validations/cycle.validation";
 
 const cycleService = new CycleService();
 
 export class CycleController {
-  async create(req: Request, res: Response) {
-    const { startDate, endDate, cycleLength, notes } = req.body;
+  async create(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { startDate, endDate, cycleLength, notes } =
+        cycleSchema.parse(req.body);
 
-    const userId = req.user!.userId;
+      const userId = req.user!.userId;
 
-    const cycle = await cycleService.createCycle(
-      userId,
-      new Date(startDate),
-      endDate ? new Date(endDate) : undefined,
-      cycleLength,
-      notes
-    );
+      const cycle = await cycleService.createCycle(
+        userId,
+        startDate,
+        endDate,
+        cycleLength,
+        notes
+      );
 
-    return res.status(201).json(cycle);
+      return res.status(201).json(cycle);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({
+          message: "Validation failed",
+          errors: error.issues.map((issue) => issue.message),
+        });
+      }
+
+      next(error);
+    }
   }
 
-  async findAll(req: Request, res: Response) {
-    const userId = req.user!.userId;
+  async findAll(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId = req.user!.userId;
 
-    const cycles = await cycleService.getCycles(userId);
+      const cycles = await cycleService.getCycles(userId);
 
-    return res.json(cycles);
+      return res.json(cycles);
+    } catch (error) {
+      next(error);
+    }
   }
 
-  async findById(req: Request, res: Response) {
-    const { id } = req.params;
-    const userId = req.user!.userId;
+  async findById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const userId = req.user!.userId;
 
-    const cycle = await cycleService.getCycleById(
-      Number(id),
-      userId
-    );
+      const cycle = await cycleService.getCycleById(
+        Number(id),
+        userId
+      );
 
-    return res.json(cycle);
+      return res.json(cycle);
+    } catch (error) {
+      next(error);
+    }
   }
 
-  async update(req: Request, res: Response) {
-    const { id } = req.params;
-    const userId = req.user!.userId;
+  async update(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const userId = req.user!.userId;
 
-    const { startDate, endDate, cycleLength, notes } = req.body;
+      const { startDate, endDate, cycleLength, notes } =
+        cycleSchema.parse(req.body);
 
-    const cycle = await cycleService.updateCycle(
-      Number(id),
-      userId,
-      new Date(startDate),
-      endDate ? new Date(endDate) : undefined,
-      cycleLength,
-      notes
-    );
+      const cycle = await cycleService.updateCycle(
+        Number(id),
+        userId,
+        startDate,
+        endDate,
+        cycleLength,
+        notes
+      );
 
-    return res.json(cycle);
+      return res.json(cycle);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({
+          message: "Validation failed",
+          errors: error.issues.map((issue) => issue.message),
+        });
+      }
+
+      next(error);
+    }
   }
 
-  async delete(req: Request, res: Response) {
-    const { id } = req.params;
-    const userId = req.user!.userId;
+  async delete(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const userId = req.user!.userId;
 
-    await cycleService.deleteCycle(
-      Number(id),
-      userId
-    );
+      await cycleService.deleteCycle(
+        Number(id),
+        userId
+      );
 
-    return res.status(204).send();
+      return res.status(204).send();
+    } catch (error) {
+      next(error);
+    }
   }
 }
