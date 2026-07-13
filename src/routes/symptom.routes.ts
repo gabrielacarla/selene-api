@@ -1,9 +1,12 @@
 import { Router } from "express";
 import { SymptomController } from "../controllers/symptom.controller";
+import { authMiddleware } from "../middlewares/auth.middleware";
 
 const router = Router();
 
 const symptomController = new SymptomController();
+
+router.use(authMiddleware);
 
 router.post("/", (req, res) => symptomController.create(req, res));
 router.get("/", (req, res) => symptomController.findAll(req, res));

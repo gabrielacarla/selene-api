@@ -1,34 +1,38 @@
 import { prisma } from "../lib/prisma";
 
 export class UserService {
-  async createUser(name: string, email: string) {
-    const user = await prisma.user.create({
-      data: {
-        name,
-        email,
+  async getUsers() {
+    return await prisma.user.findMany({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        createdAt: true,
+        updatedAt: true,
       },
     });
-
-    return user;
-  }
-
-  async getUsers() {
-    return await prisma.user.findMany();
   }
 
   async getUserById(id: number) {
-  const user = await prisma.user.findUnique({
-    where: {
-      id,
-    },
-  });
+    const user = await prisma.user.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
 
-  if (!user) {
-    throw new Error("User not found");
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    return user;
   }
-
-  return user;
-}
 
   async updateUser(id: number, name: string, email: string) {
     return await prisma.user.update({
@@ -38,6 +42,13 @@ export class UserService {
       data: {
         name,
         email,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        createdAt: true,
+        updatedAt: true,
       },
     });
   }
@@ -56,6 +67,13 @@ export class UserService {
     return await prisma.user.delete({
       where: {
         id,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        createdAt: true,
+        updatedAt: true,
       },
     });
   }

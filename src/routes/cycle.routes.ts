@@ -1,9 +1,12 @@
 import { Router } from "express";
 import { CycleController } from "../controllers/cycle.controller";
+import { authMiddleware } from "../middlewares/auth.middleware";
 
 const router = Router();
 
 const cycleController = new CycleController();
+
+router.use(authMiddleware);
 
 router.post("/", (req, res) => cycleController.create(req, res));
 router.get("/", (req, res) => cycleController.findAll(req, res));
