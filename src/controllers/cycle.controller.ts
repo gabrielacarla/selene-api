@@ -30,19 +30,25 @@ export class CycleController {
 
   async findById(req: Request, res: Response) {
     const { id } = req.params;
+    const userId = req.user!.userId;
 
-    const cycle = await cycleService.getCycleById(Number(id));
+    const cycle = await cycleService.getCycleById(
+      Number(id),
+      userId
+    );
 
     return res.json(cycle);
   }
 
   async update(req: Request, res: Response) {
     const { id } = req.params;
+    const userId = req.user!.userId;
 
     const { startDate, endDate, cycleLength, notes } = req.body;
 
     const cycle = await cycleService.updateCycle(
       Number(id),
+      userId,
       new Date(startDate),
       endDate ? new Date(endDate) : undefined,
       cycleLength,
@@ -54,8 +60,12 @@ export class CycleController {
 
   async delete(req: Request, res: Response) {
     const { id } = req.params;
+    const userId = req.user!.userId;
 
-    await cycleService.deleteCycle(Number(id));
+    await cycleService.deleteCycle(
+      Number(id),
+      userId
+    );
 
     return res.status(204).send();
   }

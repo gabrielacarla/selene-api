@@ -27,10 +27,11 @@ export class CycleService {
     });
   }
 
-  async getCycleById(id: number) {
-    const cycle = await prisma.cycle.findUnique({
+  async getCycleById(id: number, userId: number) {
+    const cycle = await prisma.cycle.findFirst({
       where: {
         id,
+        userId,
       },
     });
 
@@ -43,14 +44,16 @@ export class CycleService {
 
   async updateCycle(
     id: number,
+    userId: number,
     startDate: Date,
     endDate?: Date,
     cycleLength?: number,
     notes?: string
   ) {
-    const cycle = await prisma.cycle.findUnique({
+    const cycle = await prisma.cycle.findFirst({
       where: {
         id,
+        userId,
       },
     });
 
@@ -71,10 +74,11 @@ export class CycleService {
     });
   }
 
-  async deleteCycle(id: number) {
-    const cycle = await prisma.cycle.findUnique({
+  async deleteCycle(id: number, userId: number) {
+    const cycle = await prisma.cycle.findFirst({
       where: {
         id,
+        userId,
       },
     });
 
