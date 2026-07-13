@@ -19,23 +19,27 @@ export class CycleService {
     });
   }
 
-  async getCycles() {
-    return await prisma.cycle.findMany();
+  async getCycles(userId: number) {
+    return await prisma.cycle.findMany({
+      where: {
+        userId,
+      },
+    });
   }
 
- async getCycleById(id: number) {
-  const cycle = await prisma.cycle.findUnique({
-    where: {
-      id,
-    },
-  });
+  async getCycleById(id: number) {
+    const cycle = await prisma.cycle.findUnique({
+      where: {
+        id,
+      },
+    });
 
-  if (!cycle) {
-    throw new Error("Cycle not found");
+    if (!cycle) {
+      throw new Error("Cycle not found");
+    }
+
+    return cycle;
   }
-
-  return cycle;
-}
 
   async updateCycle(
     id: number,
@@ -44,6 +48,16 @@ export class CycleService {
     cycleLength?: number,
     notes?: string
   ) {
+    const cycle = await prisma.cycle.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!cycle) {
+      throw new Error("Cycle not found");
+    }
+
     return await prisma.cycle.update({
       where: {
         id,
@@ -58,6 +72,16 @@ export class CycleService {
   }
 
   async deleteCycle(id: number) {
+    const cycle = await prisma.cycle.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!cycle) {
+      throw new Error("Cycle not found");
+    }
+
     return await prisma.cycle.delete({
       where: {
         id,

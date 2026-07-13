@@ -19,9 +19,9 @@ export function authMiddleware(
     });
   }
 
-  const token = authHeader.split(" ")[1];
+  const [scheme, token] = authHeader.split(" ");
 
-  if (!token) {
+  if (scheme !== "Bearer" || !token) {
     return res.status(401).json({
       message: "Invalid token format",
     });
@@ -38,7 +38,10 @@ export function authMiddleware(
   try {
     const decoded = jwt.verify(token, secret) as JwtPayload;
 
-    req.user = decoded;
+    req.user = {
+      userId: decoded.userId,
+      email: decoded.email,
+    };
 
     next();
   } catch {

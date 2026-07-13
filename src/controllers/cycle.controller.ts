@@ -5,13 +5,9 @@ const cycleService = new CycleService();
 
 export class CycleController {
   async create(req: Request, res: Response) {
-    const {
-      userId,
-      startDate,
-      endDate,
-      cycleLength,
-      notes,
-    } = req.body;
+    const { startDate, endDate, cycleLength, notes } = req.body;
+
+    const userId = req.user!.userId;
 
     const cycle = await cycleService.createCycle(
       userId,
@@ -25,7 +21,9 @@ export class CycleController {
   }
 
   async findAll(req: Request, res: Response) {
-    const cycles = await cycleService.getCycles();
+    const userId = req.user!.userId;
+
+    const cycles = await cycleService.getCycles(userId);
 
     return res.json(cycles);
   }
@@ -41,12 +39,7 @@ export class CycleController {
   async update(req: Request, res: Response) {
     const { id } = req.params;
 
-    const {
-      startDate,
-      endDate,
-      cycleLength,
-      notes,
-    } = req.body;
+    const { startDate, endDate, cycleLength, notes } = req.body;
 
     const cycle = await cycleService.updateCycle(
       Number(id),
