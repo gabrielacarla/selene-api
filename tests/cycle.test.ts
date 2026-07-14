@@ -33,16 +33,18 @@ describe("Cycles", () => {
   }
 
   async function createCycle(token: string) {
-    return await request(app)
-      .post("/cycles")
-      .set("Authorization", `Bearer ${token}`)
-      .send({
-        startDate: "2026-07-01",
-        endDate: "2026-07-06",
-        cycleLength: 28,
-        notes: "Mild cramps",
-      });
-  }
+  const response = await request(app)
+    .post("/cycles")
+    .set("Authorization", `Bearer ${token}`)
+    .send({
+      startDate: "2026-07-01",
+      endDate: "2026-07-06",
+      cycleLength: 28,
+      notes: "Mild cramps",
+    });
+
+  return response;
+}
 
   it("should create a cycle", async () => {
     const token = await createUserAndLogin();
