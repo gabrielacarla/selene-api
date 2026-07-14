@@ -1,4 +1,5 @@
 import { prisma } from "../lib/prisma";
+import { AppError } from "../utils/AppError";
 
 export class UserService {
   async getUsers() {
@@ -28,13 +29,23 @@ export class UserService {
     });
 
     if (!user) {
-      throw new Error("User not found");
+      throw new AppError("User not found", 404);
     }
 
     return user;
   }
 
   async updateUser(id: number, name: string, email: string) {
+    const user = await prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!user) {
+      throw new AppError("User not found", 404);
+    }
+
     return await prisma.user.update({
       where: {
         id,
@@ -61,7 +72,7 @@ export class UserService {
     });
 
     if (!user) {
-      throw new Error("User not found");
+      throw new AppError("User not found", 404);
     }
 
     return await prisma.user.delete({

@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { Prisma } from "../generated/prisma/client";
+import { AppError } from "../utils/AppError";
 
 export function errorMiddleware(
   error: Error,
@@ -8,6 +9,12 @@ export function errorMiddleware(
   next: NextFunction
 ) {
   console.error(error);
+
+  if (error instanceof AppError) {
+    return res.status(error.statusCode).json({
+      message: error.message,
+    });
+  }
 
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
     if (error.code === "P2003") {
@@ -24,6 +31,6 @@ export function errorMiddleware(
   }
 
   return res.status(500).json({
-    message: error.message,
+    message: "Internal server error",
   });
 }

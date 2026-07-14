@@ -10,6 +10,7 @@ const authController = new AuthController();
  * /auth/register:
  *   post:
  *     summary: Register a new user
+ *     description: Creates a new user account.
  *     tags:
  *       - Authentication
  *     requestBody:
@@ -37,16 +38,20 @@ const authController = new AuthController();
  *         description: User registered successfully
  *         content:
  *           application/json:
- *             example:
- *               id: "1"
- *               name: Gabriela
- *               email: gabriela@email.com
- *               createdAt: "2026-07-13T10:00:00.000Z"
- *               updatedAt: "2026-07-13T10:00:00.000Z"
+ *             schema:
+ *               $ref: '#/components/schemas/User'
  *       400:
  *         description: Validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ValidationError'
  *       500:
  *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.post("/register", (req, res, next) =>
   authController.register(req, res, next)
@@ -56,7 +61,8 @@ router.post("/register", (req, res, next) =>
  * @swagger
  * /auth/login:
  *   post:
- *     summary: User login
+ *     summary: Authenticate user
+ *     description: Authenticates the user and returns a JWT token.
  *     tags:
  *       - Authentication
  *     requestBody:
@@ -80,14 +86,30 @@ router.post("/register", (req, res, next) =>
  *         description: Login successful
  *         content:
  *           application/json:
- *             example:
- *               token: "jwt_token_here"
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
  *       400:
  *         description: Validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ValidationError'
  *       401:
- *         description: Invalid credentials
+ *         description: Invalid email or password
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       500:
  *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.post("/login", (req, res, next) =>
   authController.login(req, res, next)

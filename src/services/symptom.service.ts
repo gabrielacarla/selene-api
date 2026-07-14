@@ -1,32 +1,26 @@
 import { prisma } from "../lib/prisma";
+import { AppError } from "../utils/AppError";
 
 export class SymptomService {
   async createSymptom(
     cycleId: number,
-    userId: number,
     name: string,
     intensity?: number,
     notes?: string
   ) {
-    const cycle = await prisma.cycle.findFirst({
-      where: {
-        id: cycleId,
-        userId,
-      },
-    });
-
-    if (!cycle) {
-      throw new Error("Cycle not found");
+    try {
+      return await prisma.symptom.create({
+        data: {
+          cycleId,
+          name,
+          intensity,
+          notes,
+        },
+      });
+    } catch (error) {
+      console.error("CREATE SYMPTOM ERROR:", error);
+      throw error;
     }
-
-    return await prisma.symptom.create({
-      data: {
-        cycleId,
-        name,
-        intensity,
-        notes,
-      },
-    });
   }
 
   async getSymptoms(userId: number) {
@@ -50,7 +44,7 @@ export class SymptomService {
     });
 
     if (!symptom) {
-      throw new Error("Symptom not found");
+      throw new AppError("Symptom not found", 404);
     }
 
     return symptom;
@@ -59,11 +53,9 @@ export class SymptomService {
   async updateSymptom(
     id: number,
     userId: number,
-    data: {
-      name?: string;
-      intensity?: number;
-      notes?: string;
-    }
+    name: string,
+    intensity?: number,
+    notes?: string
   ) {
     const symptom = await prisma.symptom.findFirst({
       where: {
@@ -75,14 +67,18 @@ export class SymptomService {
     });
 
     if (!symptom) {
-      throw new Error("Symptom not found");
+      throw new AppError("Symptom not found", 404);
     }
 
     return await prisma.symptom.update({
       where: {
         id,
       },
-      data,
+      data: {
+        name,
+        intensity,
+        notes,
+      },
     });
   }
 
@@ -97,7 +93,7 @@ export class SymptomService {
     });
 
     if (!symptom) {
-      throw new Error("Symptom not found");
+      throw new AppError("Symptom not found", 404);
     }
 
     return await prisma.symptom.delete({

@@ -1,4 +1,5 @@
 import { prisma } from "../lib/prisma";
+import { AppError } from "../utils/AppError";
 
 export class CycleService {
   async createCycle(
@@ -24,9 +25,6 @@ export class CycleService {
       where: {
         userId,
       },
-      orderBy: {
-        startDate: "desc",
-      },
     });
   }
 
@@ -39,7 +37,7 @@ export class CycleService {
     });
 
     if (!cycle) {
-      throw new Error("Cycle not found");
+      throw new AppError("Cycle not found", 404);
     }
 
     return cycle;
@@ -48,12 +46,10 @@ export class CycleService {
   async updateCycle(
     id: number,
     userId: number,
-    data: {
-      startDate?: Date;
-      endDate?: Date;
-      cycleLength?: number;
-      notes?: string;
-    }
+    startDate: Date,
+    endDate?: Date,
+    cycleLength?: number,
+    notes?: string
   ) {
     const cycle = await prisma.cycle.findFirst({
       where: {
@@ -63,14 +59,19 @@ export class CycleService {
     });
 
     if (!cycle) {
-      throw new Error("Cycle not found");
+      throw new AppError("Cycle not found", 404);
     }
 
     return await prisma.cycle.update({
       where: {
         id,
       },
-      data,
+      data: {
+        startDate,
+        endDate,
+        cycleLength,
+        notes,
+      },
     });
   }
 
@@ -83,7 +84,7 @@ export class CycleService {
     });
 
     if (!cycle) {
-      throw new Error("Cycle not found");
+      throw new AppError("Cycle not found", 404);
     }
 
     return await prisma.cycle.delete({
