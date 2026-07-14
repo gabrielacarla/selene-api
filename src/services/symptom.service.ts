@@ -3,10 +3,22 @@ import { prisma } from "../lib/prisma";
 export class SymptomService {
   async createSymptom(
     cycleId: number,
+    userId: number,
     name: string,
     intensity?: number,
     notes?: string
   ) {
+    const cycle = await prisma.cycle.findFirst({
+      where: {
+        id: cycleId,
+        userId,
+      },
+    });
+
+    if (!cycle) {
+      throw new Error("Cycle not found");
+    }
+
     return await prisma.symptom.create({
       data: {
         cycleId,
@@ -47,9 +59,11 @@ export class SymptomService {
   async updateSymptom(
     id: number,
     userId: number,
-    name: string,
-    intensity?: number,
-    notes?: string
+    data: {
+      name?: string;
+      intensity?: number;
+      notes?: string;
+    }
   ) {
     const symptom = await prisma.symptom.findFirst({
       where: {
@@ -68,11 +82,7 @@ export class SymptomService {
       where: {
         id,
       },
-      data: {
-        name,
-        intensity,
-        notes,
-      },
+      data,
     });
   }
 

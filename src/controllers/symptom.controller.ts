@@ -1,7 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import { ZodError } from "zod";
 import { SymptomService } from "../services/symptom.service";
-import { symptomSchema } from "../validations/symptom.validation";
+import {
+  symptomSchema,
+  updateSymptomSchema,
+} from "../validations/symptom.validation";
 
 const symptomService = new SymptomService();
 
@@ -11,8 +14,11 @@ export class SymptomController {
       const { cycleId, name, intensity, notes } =
         symptomSchema.parse(req.body);
 
+      const userId = req.user!.userId;
+
       const symptom = await symptomService.createSymptom(
         cycleId,
+        userId,
         name,
         intensity,
         notes
@@ -64,15 +70,17 @@ export class SymptomController {
       const { id } = req.params;
       const userId = req.user!.userId;
 
-      const { cycleId, name, intensity, notes } =
-        symptomSchema.parse(req.body);
+      const { name, intensity, notes } =
+        updateSymptomSchema.parse(req.body);
 
       const symptom = await symptomService.updateSymptom(
         Number(id),
         userId,
-        name,
-        intensity,
-        notes
+        {
+          name,
+          intensity,
+          notes,
+        }
       );
 
       return res.json(symptom);
