@@ -121,6 +121,8 @@ Inicie a aplicação
 npm run dev
 ```
 
+**Observação:** Em algumas configurações do PostgreSQL no Windows, `localhost` pode não funcionar corretamente na `DATABASE_URL`. Se ocorrer erro de conexão, substitua `localhost` por `127.0.0.1`.
+
 ---
 
 # ☾ Testes
