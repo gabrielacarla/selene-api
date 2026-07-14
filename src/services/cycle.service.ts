@@ -46,10 +46,12 @@ export class CycleService {
   async updateCycle(
     id: number,
     userId: number,
-    startDate: Date,
-    endDate?: Date,
-    cycleLength?: number,
-    notes?: string
+    data: {
+      startDate?: Date;
+      endDate?: Date;
+      cycleLength?: number;
+      notes?: string;
+    }
   ) {
     const cycle = await prisma.cycle.findFirst({
       where: {
@@ -66,12 +68,7 @@ export class CycleService {
       where: {
         id,
       },
-      data: {
-        startDate,
-        endDate,
-        cycleLength,
-        notes,
-      },
+      data,
     });
   }
 
