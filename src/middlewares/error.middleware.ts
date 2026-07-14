@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { Prisma } from "../generated/prisma/client";
+import { Prisma } from "@prisma/client";
 import { AppError } from "../utils/AppError";
 
 export function errorMiddleware(
@@ -8,8 +8,6 @@ export function errorMiddleware(
   res: Response,
   next: NextFunction
 ) {
-  console.error(error);
-
   if (error instanceof AppError) {
     return res.status(error.statusCode).json({
       message: error.message,
@@ -19,18 +17,20 @@ export function errorMiddleware(
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
     if (error.code === "P2003") {
       return res.status(400).json({
-        message: "Related record not found",
+        message: "Invalid relation data.",
       });
     }
 
     if (error.code === "P2025") {
       return res.status(404).json({
-        message: "Record not found",
+        message: "Record not found.",
       });
     }
   }
 
+  console.error(error);
+
   return res.status(500).json({
-    message: "Internal server error",
+    message: "Internal server error.",
   });
 }

@@ -9,10 +9,10 @@ const options: swaggerJsdoc.Options = {
       description: "API para gerenciamento de ciclos menstruais.",
     },
     servers: [
-      {
-        url: "http://localhost:3000",
-        description: "Servidor Local",
-      },
+       {
+    url: "http://127.0.0.1:3000",
+    description: "Servidor Local",
+       },
     ],
     components: {
       securitySchemes: {
