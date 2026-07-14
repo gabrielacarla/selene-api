@@ -15,3 +15,5 @@ export const cycleSchema = z.object({
 
   notes: z.string().optional(),
 });
+
+export const updateCycleSchema = cycleSchema.partial();

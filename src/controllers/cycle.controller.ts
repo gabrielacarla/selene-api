@@ -1,7 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import { ZodError } from "zod";
 import { CycleService } from "../services/cycle.service";
-import { cycleSchema } from "../validations/cycle.validation";
+import {
+  cycleSchema,
+  updateCycleSchema,
+} from "../validations/cycle.validation";
 
 const cycleService = new CycleService();
 
@@ -68,15 +71,17 @@ export class CycleController {
       const userId = req.user!.userId;
 
       const { startDate, endDate, cycleLength, notes } =
-        cycleSchema.parse(req.body);
+        updateCycleSchema.parse(req.body);
 
       const cycle = await cycleService.updateCycle(
         Number(id),
         userId,
-        startDate,
-        endDate,
-        cycleLength,
-        notes
+        {
+          startDate,
+          endDate,
+          cycleLength,
+          notes,
+        }
       );
 
       return res.json(cycle);
