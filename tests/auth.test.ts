@@ -46,4 +46,35 @@ describe("Auth", () => {
 
     expect(response.body).toHaveProperty("token");
   });
+
+  it("should not register user with existing email", async () => {
+    const user = createUser();
+
+    await request(app)
+      .post("/auth/register")
+      .send(user);
+
+    const response = await request(app)
+      .post("/auth/register")
+      .send(user);
+
+    expect(response.status).toBe(500);
+  });
+
+  it("should not login with wrong password", async () => {
+    const user = createUser();
+
+    await request(app)
+      .post("/auth/register")
+      .send(user);
+
+    const response = await request(app)
+      .post("/auth/login")
+      .send({
+        email: user.email,
+        password: "wrong-password",
+      });
+
+    expect(response.status).toBe(500);
+  });
 });

@@ -72,7 +72,6 @@ describe("Symptoms", () => {
     expect(response.body.name).toBe("Cramps");
   });
 
-
   it("should list user symptoms", async () => {
     const token = await createUserAndLogin();
 
@@ -91,7 +90,6 @@ describe("Symptoms", () => {
 
     expect(response.body).toHaveLength(1);
   });
-
 
   it("should get symptom by id", async () => {
     const token = await createUserAndLogin();
@@ -113,7 +111,6 @@ describe("Symptoms", () => {
       symptom.body.id
     );
   });
-
 
   it("should update a symptom", async () => {
     const token = await createUserAndLogin();
@@ -140,7 +137,6 @@ describe("Symptoms", () => {
     expect(response.body.intensity).toBe(5);
   });
 
-
   it("should delete a symptom", async () => {
     const token = await createUserAndLogin();
 
@@ -156,5 +152,46 @@ describe("Symptoms", () => {
       .set("Authorization", `Bearer ${token}`);
 
     expect(response.status).toBe(204);
+  });
+
+  it("should not create symptom without authentication", async () => {
+    const response = await request(app)
+      .post("/symptoms")
+      .send({
+        cycleId: 1,
+        name: "Cramps",
+        intensity: 7,
+        notes: "Pain during first days",
+      });
+
+    expect(response.status).toBe(401);
+  });
+
+  it("should not find a symptom that does not exist", async () => {
+    const token = await createUserAndLogin();
+
+    const response = await request(app)
+      .get("/symptoms/999999")
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(response.status).toBe(404);
+  });
+
+  it("should not access another user's symptom", async () => {
+    const userToken = await createUserAndLogin();
+    const otherUserToken = await createUserAndLogin();
+
+    const cycle = await createCycle(userToken);
+
+    const symptom = await createSymptom(
+      userToken,
+      cycle.body.id
+    );
+
+    const response = await request(app)
+      .get(`/symptoms/${symptom.body.id}`)
+      .set("Authorization", `Bearer ${otherUserToken}`);
+
+    expect(response.status).toBe(404);
   });
 });

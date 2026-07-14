@@ -33,18 +33,18 @@ describe("Cycles", () => {
   }
 
   async function createCycle(token: string) {
-  const response = await request(app)
-    .post("/cycles")
-    .set("Authorization", `Bearer ${token}`)
-    .send({
-      startDate: "2026-07-01",
-      endDate: "2026-07-06",
-      cycleLength: 28,
-      notes: "Mild cramps",
-    });
+    const response = await request(app)
+      .post("/cycles")
+      .set("Authorization", `Bearer ${token}`)
+      .send({
+        startDate: "2026-07-01",
+        endDate: "2026-07-06",
+        cycleLength: 28,
+        notes: "Mild cramps",
+      });
 
-  return response;
-}
+    return response;
+  }
 
   it("should create a cycle", async () => {
     const token = await createUserAndLogin();
@@ -114,5 +114,42 @@ describe("Cycles", () => {
       .set("Authorization", `Bearer ${token}`);
 
     expect(response.status).toBe(204);
+  });
+
+  it("should not create cycle without authentication", async () => {
+    const response = await request(app)
+      .post("/cycles")
+      .send({
+        startDate: "2026-07-01",
+        endDate: "2026-07-06",
+        cycleLength: 28,
+        notes: "Mild cramps",
+      });
+
+    expect(response.status).toBe(401);
+  });
+
+  it("should not find a cycle that does not exist", async () => {
+    const token = await createUserAndLogin();
+
+    const response = await request(app)
+      .get("/cycles/999999")
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(response.status).toBe(404);
+  });
+
+  it("should not access another user's cycle", async () => {
+    const userToken = await createUserAndLogin();
+
+    const otherUserToken = await createUserAndLogin();
+
+    const cycle = await createCycle(userToken);
+
+    const response = await request(app)
+      .get(`/cycles/${cycle.body.id}`)
+      .set("Authorization", `Bearer ${otherUserToken}`);
+
+    expect(response.status).toBe(404);
   });
 });
