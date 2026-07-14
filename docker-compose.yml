@@ -1,0 +1,28 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: selene-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+      POSTGRES_DB: selene
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  api:
+    build: .
+    container_name: selene-api
+    restart: always
+    depends_on:
+      - postgres
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://postgres:123@postgres:5432/selene
+      JWT_SECRET: selene-super-secret-key
+
+volumes:
+  postgres_data:
