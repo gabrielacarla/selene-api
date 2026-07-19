@@ -15,6 +15,7 @@ Desenvolvido com **Node.js**, **TypeScript**, **Express** e **Prisma ORM**.
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql)
 ![Vitest](https://img.shields.io/badge/Vitest-6E9F18?style=for-the-badge&logo=vitest)
 ![Swagger](https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 
 </div>
 
@@ -60,23 +61,41 @@ Além das funcionalidades principais, a API também conta com documentação Swa
 
 # ☾ Estrutura
 
-```text
-src
-├── controllers
-├── middlewares
-├── routes
-├── services
-├── validations
-├── utils
-├── lib
-├── app.ts
-└── server.ts
-
-tests
-├── auth.test.ts
-├── cycle.test.ts
-├── symptom.test.ts
-└── setup.ts
+```bash
+selene-api
+│
+├── prisma
+│   ├── migrations
+│   └── schema.prisma
+│
+├── src
+│   ├── controllers
+│   ├── docs
+│   ├── lib
+│   ├── middlewares
+│   ├── routes
+│   ├── services
+│   ├── types
+│   ├── utils
+│   ├── validations
+│   ├── app.ts
+│   └── server.ts
+│
+├── tests
+│   ├── auth.test.ts
+│   ├── cycle.test.ts
+│   ├── symptom.test.ts
+│   └── setup.ts
+│
+├── .env.example
+├── Dockerfile
+├── docker-compose.yml
+├── package.json
+├── prisma.config.ts
+├── tsconfig.json
+├── tsconfig.test.json
+├── vitest.config.ts
+└── README.md
 ```
 
 ---
